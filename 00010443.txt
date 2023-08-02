@@ -1,0 +1,57 @@
+-- 1. Show list of unique cities from table Person.Address. Sort results by city name in descending order.
+
+select distinct city
+from Person.Address
+order by city desc
+
+-- 2. Show all the details of those sales persons who has Bonus in the range from 2500 to 5000. Sort results by Bonus in ascending order.
+
+select *
+from Sales.SalesPerson
+where Bonus between 2500 and 5000
+order by Bonus 
+
+-- 3. Show those transaction history records that have quantity in the range from 5 to 8 and product name contains word 'sport'. In the output show product name, quantity, transaction date,
+-- actual cost, and product color. Provide meaningful column aliases for all the columns in the results. Sort results by transaction date in descending order and then by
+-- product name in ascending order. (Use tables [Production].[TransactionHistory], production.Product).
+
+select pt.Quantity, pp.[Name]
+from Production.TransactionHistory pt join production.Product pp on pt.ProductID = pp.ProductID
+where [name] like '%sport%' and Quantity between 5 and 8
+order by TransactionHistory 
+
+
+
+ -- 4. For each order in production.transactionhistory show how many of history records it includes, and total actual cost of each order. Do this calculations only for history
+ -- records that are after '2013-07-31' (use transactiondate column). Show only those orders which have more than 60 history records.
+ -- Provide meaningful column aliases for all the columns in the results. Sort results by number of history records of the order in descending order. (Use table production.transactionhistory). 
+
+
+ select * History Record
+from production.transactionhistory
+where transactiondate > '2013-07-31'
+group by MaritalStatus, Gender
+having HistoryRecords > 60
+order by history records desc 
+
+ -- 5. Show all sales persons who has last year sales more than 0 and less than the average last year sales among all sales persons. In the results display store name,
+ -- months since ModifiedDate of the sales person till now, and average sales last year among all sales persons. Provide meaningful names for the columns in the results.
+ -- Sort results by the store name column in descending order. (Use tables Sales.SalesPerson and Sales.Store).
+
+select name
+ , DATEDIFF(month, sp.ModifiedDate, getdate()) "Months till now"
+, (select avg(SalesLastYear) from Sales.SalesPerson) "Avg sales last year"
+from Sales.SalesPerson sp join Sales.Store p on sp.BusinessEntityID =
+p.BusinessEntityID
+where sp.Bonus > 0 and sp.SalesLastYear > (select avg(SalesLastYear) from
+Sales.SalesPerson)
+order by name desc
+
+-- 6. Create one view for any SQL query. State if the view is updatable or not, explain your decision.
+
+create view product_names_view as
+Select pp.Name as product, pc.Name as model
+from Production.Product pp 
+join production.ProductModelProductDescriptionCulture pm 
+on pp.ProductModelID=pm.ProductModelID
+join Production.Culture pc on pm.CultureID=pc.CultureID
